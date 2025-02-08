@@ -5,7 +5,7 @@ from Functions.LedMng import set_led
 
 class SensorManager:
     def __init__(self):
-        self.data = {"Device": config.DEVICE_ID, "SV": config.FIRMWARE}
+        self.data = {"Device": config.DEVICE_ID, "SV": config.FIRMWARE,"Email": config.EMAIL,"Key": config.KEY}
         self.debug = config.DEBUG
         
     def _debug_print(self, message):
@@ -50,11 +50,11 @@ class SensorManager:
                 "HumCO2": hum_1
             })
             if co2 >= 1500:
-                set_led((158, 29, 13))
+                set_led((30, 0, 0))
             elif co2 >= 1000:
-                set_led((240, 162, 0))
+                set_led((30, 10, 0))
             else:
-                set_led((14, 133, 8))
+                set_led((0, 30, 0))
         finally:
             PowerMng("off", "Sensors3V")
 

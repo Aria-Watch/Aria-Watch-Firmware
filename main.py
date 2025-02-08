@@ -25,7 +25,7 @@ def check_daily_tasks(info):
         if config.DEVICE_MODEL == "Bora":GPS.readGPSdata()  # One time a day check the GPS
 
 def main():
-    LedMng.set_led((111, 218, 235))  
+    LedMng.set_led((0, 0, 30))  
 
     # BLE and Led management for "Bora"
     if config.DEVICE_MODEL == "Bora":
