@@ -1,1 +1,12 @@
-{"TodaySamplings": 6, "TotalSamplings": 1110}
+{
+    "ID": "",
+    "Device_Key": "",
+    "Device_Model": "",
+    "TodaySamplings": 0,
+    "TotalSamplings": 0,
+    "FW_VERSION": "0.01",
+    "PM": false,
+    "CO": false,
+    "CH4": false,
+    "DHT22": false
+}

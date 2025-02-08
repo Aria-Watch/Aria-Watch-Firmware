@@ -1,7 +1,4 @@
-'''
- * Copyright (C) 2024 Aria.Watch - All Rights Reserved
-'''
-from .Tools import *
+from Functions.Tools import GetTime
 import config
 
 #Function to handle log and error

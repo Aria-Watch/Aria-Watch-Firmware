@@ -1,1 +1,4 @@
-{"WIFI_PASS": "XXXXXX", "WIFI": "XXXXX"}
+{
+    "WIFI_PASS": "", 
+    "WIFI_SSID": ""
+}

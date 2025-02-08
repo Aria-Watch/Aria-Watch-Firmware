@@ -1,0 +1,9 @@
+{
+    "Device_Model": "",
+    "WIFI_SSID": "",
+    "WIFI_PASS": "",
+    "PM": false,
+    "CO": false,
+    "CH4": false,
+    "DHT22": false
+}

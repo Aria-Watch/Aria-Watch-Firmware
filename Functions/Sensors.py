@@ -1,16 +1,12 @@
-'''
- * Copyright (C) 2024 Aria.Watch - All Rights Reserved
-'''
 import scd4x,machine,time,dht,config
-from pms5003 import PMS5003
-from bme import *
-from .Tools import *
-from .ErrorHandling import *
+from lib.pms5003 import PMS5003
+from lib.bme import *
+from Functions.ErrorHandling import LogMaster
 
 def ReadCO2(pres):
     if config.DEBUG: print("-> Read CO2")
     try:
-        i2c = machine.I2C(1, sda=machine.Pin(8), scl=machine.Pin(9), freq=100000) 
+        i2c = machine.I2C(1, sda=machine.Pin(config.SDA_PIN), scl=machine.Pin(config.SCL_PIN), freq=100000) 
         scd4x_sensor = scd4x.SCD4X(i2c) #Inizializzazione sensore
         scd4x_sensor.set_ambient_pressure(pres)
         scd4x_sensor.start_periodic_measurement() #Modalità lettura
@@ -31,9 +27,9 @@ def ReadPmData():
     if config.DEBUG: print("-> Read PM")
     try:
         pms5003 = PMS5003(
-            uart=machine.UART(1, tx=14, rx=13, baudrate=9600),
-            pin_enable=machine.Pin(15),
-            pin_reset=machine.Pin(12),
+            uart=machine.UART(1, tx=config.PM_TX, rx=config.PM_RX, baudrate=9600),
+            pin_enable=machine.Pin(config.PM_EN),
+            pin_reset=machine.Pin(config.PM_RST),
             mode="active"
         )
         for i in range(3) :
@@ -50,7 +46,7 @@ def ReadPmData():
 def ReadDHT22():
     if config.DEBUG: print("-> Read Temp and Hum")
     try:
-        sensor = dht.DHT22(machine.Pin(0))
+        sensor = dht.DHT22(machine.Pin(config.DHT_PIN))
         for i in range(3) :
             time.sleep(1)
             sensor.measure()
@@ -65,8 +61,11 @@ def ReadDHT22():
 def ReadVOC():
     if config.DEBUG: print("-> Read VOC")
     try:
-        i2c0 = machine.I2C(1, scl = machine.Pin(9), sda = machine.Pin(8), freq = 400000)
-        bme = BME680_I2C(i2c=i2c0)
+        i2c0 = machine.I2C(1, scl = machine.Pin(config.SCL_PIN), sda = machine.Pin(config.SDA_PIN), freq = 400000)
+        if config.DEVICE_MODEL == "Borino":
+            bme = BME680_I2C(i2c=i2c0,address=0x76)
+        else:
+            bme = BME680_I2C(i2c=i2c0,address=0x77)
         bme.sea_level_pressure = 1002 # Mettere questo campo in base alla posizione del GPS 
         for i in range(3) :
             time.sleep(1)
@@ -82,10 +81,8 @@ def ReadVOC():
     return(temp,hum,pres,gas,alt)
 
 
-
-
 def ReadCO():
-    uart = machine.UART(1, baudrate=9600, tx=41, rx=40,bits=8, parity=None, stop=1)
+    uart = machine.UART(1, baudrate=9600, tx=config.CO_TX, rx=config.CO_RX,bits=8, parity=None, stop=1)
     while True:
         if uart.any():
             # Read the data from UART
@@ -96,13 +93,13 @@ def ReadCO():
                 concentration = (concentration_high * 256) + concentration_low
                 return concentration
             else:
-                ErrorHandling.LogMaster("Error in CO Sensor! Error: Invalid start byte received from sensor.","Error",1)
+                LogMaster("Error in CO Sensor! Error: Invalid start byte received from sensor.","Error",1)
                 return
 
 
 def ReadMQ4():
     # --- TO check and improve ALL
-    sensor_pin = machine.ADC(machine.Pin(3))
+    sensor_pin = machine.ADC(machine.Pin(config.CH4_PIN))
     calibration_factor = 6.0
     sensor_value = sensor_pin.read()
     voltage = sensor_value * 5 / 1024.0

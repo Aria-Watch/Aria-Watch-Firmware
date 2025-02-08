@@ -1,8 +1,4 @@
-'''
- * Copyright (C) 2024 Aria.Watch - All Rights Reserved
-'''
-
-import machine,json
+import machine,json,os,random,hashlib
 from machine import RTC, ADC
 
 def UpdateSampling():
@@ -123,7 +119,37 @@ def set_rtc_from_json(json_data):
             f.write("\n" + "["+ str(GetTime()) +"] -> Failed to set RTC: " + str(e))
         f.close()
         
-        
-        
-        
-        
+# Function to set the first boot configuration       
+def first_boot():
+    chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+
+    with open("first_boot.json", 'r') as f:
+        config = json.load(f)
+    with open("data/info.json", 'r') as f:
+        info = json.load(f)
+    with open("data/wifi.json", 'r') as f:
+        wifi = json.load(f)
+
+    for key in config:
+        if key in info:
+            info[key] = config[key]
+        if key in wifi:
+            wifi[key] = config[key]
+
+    random_string = ''.join(random.choice(chars) for _ in range(12))
+    hash_object = hashlib.sha256()
+    hash_object.update(random_string.encode())
+    hash_object = hashlib.sha256(random_string.encode())
+    hash_bytes = hash_object.digest()
+    hash_hex = ''.join(['{:02x}'.format(b) for b in hash_bytes])
+    info["ID"] = str(config["Device_Model"]) + "_" + str(random_string)
+    info["Device_Key"] = str(hash_hex[:12])
+
+    #Save the new configuration        
+    with open("data/info.json", 'w') as f:
+        json.dump(info, f)
+    with open("data/wifi.json", 'w') as f:
+        json.dump(wifi, f)
+    #Remove the first_boot.json file
+    os.remove("first_boot.json")
+    return

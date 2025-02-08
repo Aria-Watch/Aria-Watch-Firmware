@@ -1,7 +1,3 @@
-'''
- * Copyright (C) 2024 Aria.Watch - All Rights Reserved
-'''
-
 import time, json ,machine,config
 from .Tools import *
 from .ErrorHandling import *
