@@ -25,7 +25,7 @@ OTA_UPDATE = False
 DEVICE_SETTINGS = {
     "Bora": {
         "SLEEP_TIME": 1800000,
-        "SDA_PIN": 9,
+        "SDA_PIN": 8,
         "SCL_PIN": 9,
         "PM_CONFIG": {
             "TX": 14,

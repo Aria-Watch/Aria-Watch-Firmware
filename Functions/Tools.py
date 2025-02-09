@@ -1,5 +1,5 @@
 import machine,json,os,random,hashlib
-from machine import RTC, ADC
+from machine import RTC, ADC, reset
 
 def UpdateSampling():
     with open('data/info.json') as f:
@@ -82,17 +82,21 @@ def GetTime():
         
         
 def LogCleaner():
-    logfiles = ['data/log/error.log','data/log/sent.log','data/log/gps.log','data/log/wifi.log']
-    for x in logfiles:
-        with open(x, 'r') as file:
+    logfiles = [
+        'data/log/error.log',
+        'data/log/sent.log',
+        'data/log/gps.log',
+        'data/log/wifi.log'
+    ]
+    
+    for logfile in logfiles:
+        with open(logfile, 'r') as file:
             lines = file.readlines()
         if len(lines) > 1000:
-            with open(x, 'w') as file:
-                for line in lines[100:]:  # Write Log
-                    file.write(line)
-        
-            file.close()
-        
+            with open(logfile, 'w') as file:
+                file.writelines(lines[100:])  
+
+
 def set_rtc_from_json(json_data):
     # Assumi che json_data sia un dizionario decodificato contenente il risultato del POST
     try:
@@ -152,4 +156,4 @@ def first_boot():
         json.dump(wifi, f)
     #Remove the first_boot.json file
     os.remove("first_boot.json")
-    return
+    reset()

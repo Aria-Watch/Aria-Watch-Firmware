@@ -65,7 +65,7 @@ def ReadVOC():
         if config.DEVICE_MODEL == "Borino":
             bme = BME680_I2C(i2c=i2c0,address=0x76)
         else:
-            bme = BME680_I2C(i2c=i2c0,address=0x77)
+            bme = BME680_I2C(i2c=i2c0)
         bme.sea_level_pressure = 1002 # Mettere questo campo in base alla posizione del GPS 
         for i in range(3) :
             time.sleep(1)
